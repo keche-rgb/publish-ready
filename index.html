@@ -36,14 +36,14 @@
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
 
-        // --- VOS CONSTANTES DE CERTIFICATION KDP ---
+        // --- CONSTANTES DE CERTIFICATION KDP ---
         const PAPER_THICKNESS_FACTOR = 0.002212; 
         const SPINE_MIN_WIDTH = 0.125;
         const KDP_WIDTH_IN = 5.0;
         const KDP_HEIGHT_IN = 8.0;
 
         function PublishReady() {
-            // Sauvegarde automatique locale pour éviter les pertes sur smartphone
+            // Sauvegarde locale automatique
             const [bookData, setBookData] = useState(() => {
                 const saved = localStorage.getItem('publishready_book');
                 return saved ? JSON.parse(saved) : {
@@ -58,15 +58,39 @@
                 };
             });
 
-            const [activeTab, setActiveTab] = useState('ecrire'); // ecrire, structure, visuel, export
+            const [activeTab, setActiveTab] = useState('ecrire');
+            const [showMusic, setShowMusic] = useState(false);
+            const [isPlaying, setIsPlaying] = useState(false);
+            const [trackUrl, setTrackUrl] = useState('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
+            
+            const audioRef = useRef(null);
+            const activeChapter = bookData.chapters.find(c => c.id === bookData.activeChapterId) || bookData.chapters[0];
 
             useEffect(() => {
                 localStorage.setItem('publishready_book', JSON.stringify(bookData));
             }, [bookData]);
 
-            const activeChapter = bookData.chapters.find(c => c.id === bookData.activeChapterId) || bookData.chapters[0];
+            // Gestion de la musique de concentration
+            const togglePlay = () => {
+                if (isPlaying) {
+                    audioRef.current.pause();
+                } else {
+                    audioRef.current.play().catch(() => console.log("Audio bloqué par le navigateur"));
+                }
+                setIsPlaying(!isPlaying);
+            };
 
-            // Calculs statistiques d'impression
+            const changeTrack = (url) => {
+                setTrackUrl(url);
+                setIsPlaying(false);
+                setTimeout(() => {
+                    if (audioRef.current) {
+                        audioRef.current.load();
+                    }
+                }, 50);
+            };
+
+            // Calculs KDP
             const totalWords = bookData.chapters.reduce((acc, c) => acc + (c.content.trim() ? c.content.trim().split(/\s+/).length : 0), 0);
             const estimatedPages = Math.max(1, Math.ceil(totalWords / 250));
             const spineWidth = Math.max(SPINE_MIN_WIDTH, estimatedPages * PAPER_THICKNESS_FACTOR);
@@ -89,22 +113,14 @@
                     title: `Chapitre ${bookData.chapters.length + 1}`,
                     content: "Nouveau chapitre..."
                 };
-                setBookData(prev => ({
-                    ...prev,
-                    chapters: [...prev.chapters, newChapter],
-                    activeChapterId: newId
-                }));
+                setBookData(prev => ({ ...prev, ...{ chapters: [...prev.chapters, newChapter], activeChapterId: newId } }));
                 setActiveTab('ecrire');
             };
 
             const deleteChapter = (id) => {
                 if (bookData.chapters.length <= 1) return;
                 const remaining = bookData.chapters.filter(c => c.id !== id);
-                setBookData(prev => ({
-                    ...prev,
-                    chapters: remaining,
-                    activeChapterId: remaining[0].id
-                }));
+                setBookData(prev => ({ ...prev, ...{ chapters: remaining, activeChapterId: remaining[0].id } }));
             };
 
             const triggerDownload = () => {
@@ -123,67 +139,79 @@
 
             return (
                 <div class="flex flex-col h-full bg-[#121212]">
-                    {/* TOP BAR */}
+                    
+                    {/* TOP BAR AVEC LECTEUR MUSIQUE INTEGRÉ */}
                     <header class="bg-[#1a1a1a] px-4 py-3 flex items-center justify-between border-b border-[#2a2a2a] shrink-0">
                         <h1 class="text-xl font-bold tracking-tight text-white">
                             Publish<span class="text-[#eab308]">Ready</span>
                         </h1>
-                        <button 
-                            onClick={triggerDownload}
-                            class="bg-[#eab308] text-[#121212] font-semibold px-4 py-1.5 rounded-lg text-sm active:scale-95 transition-transform"
-                        >
-                            Exporter
-                        </button>
+                        <div class="flex items-center gap-2">
+                            <button 
+                                onClick={() => setShowMusic(!showMusic)}
+                                class={`p-2 rounded-lg text-xs font-semibold flex items-center gap-1 transition-colors ${isPlaying ? 'bg-[#eab308]/20 text-[#eab308]' : 'bg-[#242424] text-gray-400'}`}
+                            >
+                                🎧 {isPlaying ? 'Audio ON' : 'Musique'}
+                            </button>
+                            <button 
+                                onClick={triggerDownload}
+                                class="bg-[#eab308] text-[#121212] font-semibold px-3 py-1.5 rounded-lg text-xs active:scale-95 transition-transform"
+                            >
+                                Exporter
+                            </button>
+                        </div>
                     </header>
 
-                    {/* SUB-HEADER CERTIFICATION */}
-                    <div class="bg-[#f4f4f0] text-[#444444] text-xs font-medium py-1.5 text-center tracking-wide shrink-0 shadow-inner">
+                    {/* TIROIR DE CONTROLE MUSIQUE */}
+                    {showMusic && (
+                        <div class="bg-[#1e1e1e] border-b border-[#2a2a2a] p-3 flex flex-col gap-2 shrink-0 z-10">
+                            <div class="flex items-center justify-between text-[11px] text-gray-400">
+                                <span>Ambiance Concentration</span>
+                                <button onClick={() => setShowMusic(false)} class="text-gray-500">✕ Fermer</button>
+                            </div>
+                            <div class="grid grid-cols-3 gap-1.5">
+                                <button onClick={() => changeTrack('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3')} class={`text-[10px] py-1.5 px-1 rounded truncate font-medium ${trackUrl.includes('Song-1') ? 'bg-[#eab308] text-black font-bold' : 'bg-[#2a2a2a] text-gray-300'}`}>Lofi Chill</button>
+                                <button onClick={() => changeTrack('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3')} class={`text-[10px] py-1.5 px-1 rounded truncate font-medium ${trackUrl.includes('Song-2') ? 'bg-[#eab308] text-black font-bold' : 'bg-[#2a2a2a] text-gray-300'}`}>Pluie Zen</button>
+                                <button onClick={() => changeTrack('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3')} class={`text-[10px] py-1.5 px-1 rounded truncate font-medium ${trackUrl.includes('Song-4') ? 'bg-[#eab308] text-black font-bold' : 'bg-[#2a2a2a] text-gray-300'}`}>Jazz Café</button>
+                            </div>
+                            <div class="flex items-center gap-2 mt-1 bg-[#121212] p-2 rounded-lg">
+                                <button onClick={togglePlay} class="bg-[#eab308] text-black text-[10px] font-bold px-3 py-1 rounded">
+                                    {isPlaying ? 'PAUSE' : 'PLAY'}
+                                </button>
+                                <span class="text-[10px] text-gray-400 truncate flex-1">
+                                    {isPlaying ? 'Lecture active en arrière-plan...' : 'Musique en pause'}
+                                </span>
+                                <audio ref={audioRef} loop src={trackUrl} />
+                            </div>
+                        </div>
+                    )}
+
+                    {/* BANDEAU RECONNAISSANCE FORMAT */}
+                    <div class="bg-[#f4f4f0] text-[#444444] text-[10px] font-semibold py-1 text-center tracking-wide shrink-0 shadow-inner">
                         Format d'Impression Certifié (300 DPI)
                     </div>
 
-                    {/* MAIN CONTENT AREA */}
+                    {/* ZONE PRINCIPALE */}
                     <main class="flex-1 overflow-y-auto p-4 custom-scrollbar flex flex-col gap-4 pb-24">
                         
-                        {/* CONTROLES SELON L'ONGLET ACTIF */}
                         {activeTab === 'ecrire' && (
                             <div class="bg-[#1a1a1a] p-3 rounded-xl border border-[#2a2a2a] flex flex-col gap-3 shrink-0">
                                 <div class="grid grid-cols-2 gap-2">
                                     <div>
                                         <label class="text-[10px] text-gray-400 block mb-1">Titre du livre</label>
-                                        <input 
-                                            type="text" 
-                                            value={bookData.title} 
-                                            onChange={(e) => updateField('title', e.target.value)}
-                                            class="w-full bg-[#242424] text-white rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-[#eab308] border border-transparent"
-                                        />
+                                        <input type="text" value={bookData.title} onChange={(e) => updateField('title', e.target.value)} class="w-full bg-[#242424] text-white rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-[#eab308] border border-transparent"/>
                                     </div>
                                     <div>
                                         <label class="text-[10px] text-gray-400 block mb-1">Auteur</label>
-                                        <input 
-                                            type="text" 
-                                            value={bookData.author} 
-                                            onChange={(e) => updateField('author', e.target.value)}
-                                            class="w-full bg-[#242424] text-white rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-[#eab308] border border-transparent"
-                                        />
+                                        <input type="text" value={bookData.author} onChange={(e) => updateField('author', e.target.value)} class="w-full bg-[#242424] text-white rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-[#eab308] border border-transparent"/>
                                     </div>
                                 </div>
                                 <div>
                                     <label class="text-[10px] text-gray-400 block mb-1">Titre du Chapitre</label>
-                                    <input 
-                                        type="text" 
-                                        value={activeChapter.title} 
-                                        onChange={(e) => updateChapter('title', e.target.value)}
-                                        class="w-full bg-[#242424] text-white rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-[#eab308] border border-transparent"
-                                    />
+                                    <input type="text" value={activeChapter.title} onChange={(e) => updateChapter('title', e.target.value)} class="w-full bg-[#242424] text-white rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-[#eab308] border border-transparent"/>
                                 </div>
                                 <div>
                                     <label class="text-[10px] text-gray-400 block mb-1">Corps du texte</label>
-                                    <textarea 
-                                        rows="5"
-                                        value={activeChapter.content} 
-                                        onChange={(e) => updateChapter('content', e.target.value)}
-                                        class="w-full bg-[#242424] text-white rounded-lg p-3 text-sm focus:outline-none focus:border-[#eab308] border border-transparent resize-none custom-scrollbar"
-                                    ></textarea>
+                                    <textarea rows="5" value={activeChapter.content} onChange={(e) => updateChapter('content', e.target.value)} class="w-full bg-[#242424] text-white rounded-lg p-3 text-sm focus:outline-none focus:border-[#eab308] border border-transparent resize-none custom-scrollbar"></textarea>
                                 </div>
                             </div>
                         )}
@@ -193,29 +221,15 @@
                                 <h3 class="text-sm font-semibold text-white mb-1">Gestion des Chapitres</h3>
                                 <div class="flex flex-col gap-2 max-h-48 overflow-y-auto custom-scrollbar">
                                     {bookData.chapters.map((ch) => (
-                                        <div 
-                                            key={ch.id} 
-                                            onClick={() => updateField('activeChapterId', ch.id)}
-                                            class={`p-3 rounded-lg flex items-center justify-between cursor-pointer border ${ch.id === bookData.activeChapterId ? 'bg-[#eab308]/10 border-[#eab308]' : 'bg-[#242424] border-transparent'}`}
-                                        >
+                                        <div key={ch.id} onClick={() => updateField('activeChapterId', ch.id)} class={`p-3 rounded-lg flex items-center justify-between cursor-pointer border ${ch.id === bookData.activeChapterId ? 'bg-[#eab308]/10 border-[#eab308]' : 'bg-[#242424] border-transparent'}`}>
                                             <span class="text-sm font-medium truncate pr-2 text-white">{ch.title}</span>
                                             {bookData.chapters.length > 1 && (
-                                                <button 
-                                                    onClick={(e) => { e.stopPropagation(); deleteChapter(ch.id); }}
-                                                    class="text-red-400 p-1 hover:bg-red-500/10 rounded"
-                                                >
-                                                    ✕
-                                                </button>
+                                                <button onClick={(e) => { e.stopPropagation(); deleteChapter(ch.id); }} class="text-red-400 p-1 hover:bg-red-500/10 rounded">✕</button>
                                             )}
                                         </div>
                                     ))}
                                 </div>
-                                <button 
-                                    onClick={addChapter}
-                                    class="w-full mt-2 bg-[#242424] hover:bg-[#2d2d2d] border border-dashed border-gray-600 text-sm text-gray-300 py-2 rounded-lg font-medium"
-                                >
-                                    + Ajouter un Chapitre
-                                </button>
+                                <button onClick={addChapter} class="w-full mt-2 bg-[#242424] border border-dashed border-gray-600 text-sm text-gray-300 py-2 rounded-lg font-medium">+ Ajouter un Chapitre</button>
                             </div>
                         )}
 
@@ -234,11 +248,7 @@
                                 </div>
                                 <div class="mt-2">
                                     <label class="text-[10px] text-gray-400 block mb-1">Style de Police</label>
-                                    <select 
-                                        value={bookData.fontFamily} 
-                                        onChange={(e) => updateField('fontFamily', e.target.value)}
-                                        class="w-full bg-[#242424] text-white rounded-lg px-3 py-2 text-sm focus:outline-none border border-transparent"
-                                    >
+                                    <select value={bookData.fontFamily} onChange={(e) => updateField('fontFamily', e.target.value)} class="w-full bg-[#242424] text-white rounded-lg px-3 py-2 text-sm focus:outline-none border border-transparent">
                                         <option value="Georgia">Georgia (Standard Roman)</option>
                                         <option value="'Times New Roman', serif">Times New Roman</option>
                                         <option value="Cinzel, serif">Cinzel (Épuré/Moderne)</option>
@@ -250,7 +260,7 @@
                         {activeTab === 'export' && (
                             <div class="bg-[#1a1a1a] p-4 rounded-xl border border-[#2a2a2a] flex flex-col gap-3 text-center shrink-0">
                                 <h3 class="text-sm font-semibold text-white mb-1">Prêt pour Publication</h3>
-                                <p class="text-xs text-gray-400 px-2">Votre manuscrit respecte les marges et ratios d'impression standards requis par les plateformes de distribution automatisées.</p>
+                                <p class="text-xs text-gray-400 px-2">Manuscrit configuré selon les ratios automatisés standardisés.</p>
                                 <div class="mt-2 p-3 bg-[#242424] rounded-lg text-left text-xs space-y-1 text-gray-300">
                                     <div>• Total Mots : <span class="text-white font-bold">{totalWords}</span></div>
                                     <div>• Gabarit : <span class="text-white font-bold">{KDP_WIDTH_IN}x{KDP_HEIGHT_IN} pouces</span></div>
@@ -259,7 +269,7 @@
                             </div>
                         )}
 
-                        {/* APERÇU TEMPS RÉEL (VOTRE RECONSTRUCTION MAQUETTE SMARTPHONE) */}
+                        {/* MAQUETTE APERÇU ECOUTE ET RENDU */}
                         <div class="w-full flex-1 flex justify-center items-start mt-2 min-h-[380px]">
                             <div class="book-page w-full max-w-sm bg-white text-black p-8 rounded-sm flex flex-col min-h-[360px] select-none">
                                 <div class="text-center mb-8">
@@ -283,33 +293,21 @@
 
                     </main>
 
-                    {/* BOTTOM NAVIGATION BAR AUTOMATISÉE */}
+                    {/* BARRE DE NAVIGATION SMARTPHONE */}
                     <nav class="fixed bottom-0 left-0 right-0 bg-[#1a1a1a] border-t border-[#2a2a2a] flex justify-around py-2 shrink-0 z-50">
-                        <button 
-                            onClick={() => setActiveTab('ecrire')} 
-                            class={`flex flex-col items-center gap-1 text-[10px] font-semibold w-16 transition-colors ${activeTab === 'ecrire' ? 'text-[#eab308]' : 'text-gray-500'}`}
-                        >
+                        <button onClick={() => setActiveTab('ecrire')} class={`flex flex-col items-center gap-1 text-[10px] font-semibold w-16 transition-colors ${activeTab === 'ecrire' ? 'text-[#eab308]' : 'text-gray-500'}`}>
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
                             ÉCRIRE
                         </button>
-                        <button 
-                            onClick={() => setActiveTab('structure')} 
-                            class={`flex flex-col items-center gap-1 text-[10px] font-semibold w-16 transition-colors ${activeTab === 'structure' ? 'text-[#eab308]' : 'text-gray-500'}`}
-                        >
+                        <button onClick={() => setActiveTab('structure')} class={`flex flex-col items-center gap-1 text-[10px] font-semibold w-16 transition-colors ${activeTab === 'structure' ? 'text-[#eab308]' : 'text-gray-500'}`}>
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
                             STRUCTURE
                         </button>
-                        <button 
-                            onClick={() => setActiveTab('visuel')} 
-                            class={`flex flex-col items-center gap-1 text-[10px] font-semibold w-16 transition-colors ${activeTab === 'visuel' ? 'text-[#eab308]' : 'text-gray-500'}`}
-                        >
+                        <button onClick={() => setActiveTab('visuel')} class={`flex flex-col items-center gap-1 text-[10px] font-semibold w-16 transition-colors ${activeTab === 'visuel' ? 'text-[#eab308]' : 'text-gray-500'}`}>
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                             VISUEL
                         </button>
-                        <button 
-                            onClick={() => setActiveTab('export')} 
-                            class={`flex flex-col items-center gap-1 text-[10px] font-semibold w-16 transition-colors ${activeTab === 'export' ? 'text-[#eab308]' : 'text-gray-500'}`}
-                        >
+                        <button onClick={() => setActiveTab('export')} class={`flex flex-col items-center gap-1 text-[10px] font-semibold w-16 transition-colors ${activeTab === 'export' ? 'text-[#eab308]' : 'text-gray-500'}`}>
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-2m-4-1v8m0 0l3-3m-3 3L9 8m-5 5h2.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293h3.172a1 1 0 00.707-.293l2.414-2.414a1 1 0 01.707-.293H20"/></svg>
                             EXPORT
                         </button>
