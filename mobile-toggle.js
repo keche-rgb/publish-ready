@@ -1,7 +1,8 @@
 /* ============================================================
-   PUBLISHREADY — MOBILE TOGGLE SCRIPT
-   Gère l'affichage/masquage de la sidebar et du panneau droit
-   sur mobile via une barre de navigation en bas
+   PUBLISHREADY — MOBILE TOGGLE SCRIPT v2
+   - Sidebar/panel ouvrable et fermable
+   - Fermeture en touchant l'éditeur
+   - Sidebar scrollable horizontalement
    ============================================================ */
 
 (function () {
@@ -9,7 +10,6 @@
 
   function injectBottomNav() {
     if (document.getElementById('mobile-bottom-nav')) return;
-
     const nav = document.createElement('div');
     nav.className = 'mobile-bottom-nav';
     nav.id = 'mobile-bottom-nav';
@@ -30,38 +30,73 @@
     document.body.appendChild(nav);
   }
 
-  // Quel onglet est actif
+  function injectOverlay() {
+    if (document.getElementById('mobile-overlay')) return;
+    const overlay = document.createElement('div');
+    overlay.id = 'mobile-overlay';
+    overlay.style.cssText = `
+      display:none; position:fixed; inset:0; z-index:89;
+      background:rgba(0,0,0,0.01);
+    `;
+    // Toucher l'overlay (= toucher l'éditeur) ferme tout
+    overlay.addEventListener('click', function () {
+      closeAll();
+    });
+    document.body.appendChild(overlay);
+  }
+
   let currentView = 'editor';
+
+  function closeAll() {
+    const sidebar = document.getElementById('sidebar');
+    const rp = document.getElementById('right-panel');
+    const overlay = document.getElementById('mobile-overlay');
+    if (sidebar) sidebar.classList.remove('open');
+    if (rp) rp.classList.remove('open');
+    if (overlay) overlay.style.display = 'none';
+    currentView = 'editor';
+    updateNavButtons('editor');
+  }
 
   window.mobileToggle = function (view) {
     if (!isMobile()) return;
 
-    const sidebar   = document.getElementById('sidebar');
-    const rightPanel = document.getElementById('right-panel');
+    const sidebar = document.getElementById('sidebar');
+    const rp = document.getElementById('right-panel');
+    const overlay = document.getElementById('mobile-overlay');
 
-    // Si on retape le même bouton → ferme tout et revient à l'éditeur
+    // Même bouton = ferme tout
     if (view === currentView && view !== 'editor') {
-      sidebar   && sidebar.classList.remove('open');
-      rightPanel && rightPanel.classList.remove('open');
-      currentView = 'editor';
-      updateNavButtons('editor');
+      closeAll();
       return;
     }
 
     currentView = view;
 
     if (view === 'editor') {
-      sidebar   && sidebar.classList.remove('open');
-      rightPanel && rightPanel.classList.remove('open');
-    } else if (view === 'sidebar') {
-      sidebar   && sidebar.classList.toggle('open');
-      rightPanel && rightPanel.classList.remove('open');
-    } else if (view === 'panel') {
-      rightPanel && rightPanel.classList.toggle('open');
-      sidebar   && sidebar.classList.remove('open');
+      closeAll();
+      return;
     }
 
-    updateNavButtons(view);
+    if (view === 'sidebar') {
+      const isOpen = sidebar && sidebar.classList.contains('open');
+      closeAll();
+      if (!isOpen) {
+        sidebar && sidebar.classList.add('open');
+        if (overlay) overlay.style.display = 'block';
+        currentView = 'sidebar';
+      }
+    } else if (view === 'panel') {
+      const isOpen = rp && rp.classList.contains('open');
+      closeAll();
+      if (!isOpen) {
+        rp && rp.classList.add('open');
+        if (overlay) overlay.style.display = 'block';
+        currentView = 'panel';
+      }
+    }
+
+    updateNavButtons(currentView);
   };
 
   function updateNavButtons(view) {
@@ -75,18 +110,18 @@
   }
 
   function setup() {
-    if (isMobile()) injectBottomNav();
+    if (isMobile()) {
+      injectBottomNav();
+      injectOverlay();
+    }
   }
 
   window.addEventListener('resize', function () {
     if (isMobile()) {
       injectBottomNav();
+      injectOverlay();
     } else {
-      // Sur desktop : tout visible
-      const sidebar = document.getElementById('sidebar');
-      const rp = document.getElementById('right-panel');
-      if (sidebar) sidebar.classList.remove('open');
-      if (rp) rp.classList.remove('open');
+      closeAll();
     }
   });
 
