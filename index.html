@@ -2,28 +2,56 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PublishReady — Studio d'Écriture</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600&display=swap');
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>PublishReady — Enterprise Studio</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet">
 
-    /* ── VARIABLES MINIMALISTES ── */
+  <style>
+    /* ── SYSTEM DESIGN SYSTEM (VARIABLES SAAS) ── */
     :root {
-      --text-main: #202020;
-      --text-muted: #6b6b6b;
-      --bg-app: #f5f5f5;
-      --bg-panel: #ffffff;
-      --border: #e0e0e0;
-      --accent: #000000;
-      --radius: 6px;
+      --topbar-height: 56px;
+      --sidebar-left-width: 280px;
+      --sidebar-right-width: 320px;
+      --mobile-bar-height: 64px;
+
+      /* Surfaces - Profondeur de l'interface */
+      --surface-bg: #0f1011;       /* Fond absolu */
+      --surface-nav: #151618;      /* Barres de navigation */
+      --surface-panel: #1b1c1e;    /* Panneaux latéraux */
+      --surface-canvas: #f4f3ef;   /* Zone de travail (Teinte papier reposante) */
+      --surface-paper: #ffffff;    /* Feuille blanche */
+      
+      /* Bordures & Séparateurs */
+      --border-dark: #242629;
+      --border-light: #e3e1dc;
+
+      /* Couleurs de texte */
+      --text-light: #f5f6f7;
+      --text-muted-dark: #888d93;
+      --text-dark: #1c1e21;
+      --text-muted-light: #62676d;
+
+      /* Accents (Or Ambré Premium) */
+      --accent: #dfb743;
+      --accent-hover: #c9a236;
+      
+      /* Animations & Courbes Haute Qualité */
+      --radius-lg: 12px;
+      --radius-md: 8px;
+      --radius-sm: 4px;
+      --transition-fluid: cubic-bezier(0.16, 1, 0.3, 1); /* Courbe cinématique fluide */
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
+    /* Reset global pro */
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    
     body {
       font-family: 'Inter', sans-serif;
-      background: var(--bg-app);
-      color: var(--text-main);
+      background: var(--surface-bg);
+      color: var(--text-light);
       height: 100vh;
       overflow: hidden;
       display: flex;
@@ -31,342 +59,355 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ── TOP BAR (DESKTOP) ── */
-    #topbar {
-      background: var(--bg-panel);
-      display: flex; align-items: center; padding: 0 20px; height: 50px; gap: 12px;
-      border-bottom: 1px solid var(--border);
-      flex-shrink: 0; z-index: 10;
+    /* ── STRUCTURE GLOBAL (GRID CONTROL) ── */
+    #app-shell {
+      display: grid;
+      grid-template-rows: var(--topbar-height) 1fr;
+      height: 100vh;
+      width: 100vw;
     }
-    #topbar .logo {
-      font-weight: 600; color: var(--text-main); margin-right: 20px; font-size: 0.95rem;
-    }
-    .tb-btn {
-      background: transparent; border: 1px solid var(--border); color: var(--text-main);
-      padding: 6px 12px; border-radius: var(--radius); cursor: pointer; font-size: 0.8rem;
-    }
-    .tb-btn:hover { background: #f0f0f0; }
-    .tb-btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
-    #topbar .spacer { flex: 1; }
-    #word-count { font-size: 0.75rem; color: var(--text-muted); }
 
-    /* ── LAYOUT PRINCIPAL ── */
-    #main-container { display: flex; flex: 1; overflow: hidden; position: relative; }
-
-    /* ── PANNEAU GAUCHE ── */
-    #sidebar-left {
-      width: 250px; background: var(--bg-panel); display: flex; flex-direction: column;
-      border-right: 1px solid var(--border); overflow-y: auto;
+    /* TOP BAR DESKTOP & TABLETTE */
+    header.main-header {
+      background: var(--surface-nav);
+      border-bottom: 1px solid var(--border-dark);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 20px; z-index: 100;
     }
-    .section-box { padding: 15px; border-bottom: 1px solid var(--border); }
-    .section-label { font-size: 0.7rem; color: var(--text-muted); margin-bottom: 8px; font-weight: 600; text-transform: uppercase; }
+    .brand-logo { font-weight: 700; font-size: 1.05rem; letter-spacing: -0.3px; color: #fff; }
+    .brand-logo span { color: var(--accent); }
     
-    .custom-select {
-      width: 100%; background: #fff; border: 1px solid var(--border); color: var(--text-main);
-      padding: 6px 8px; border-radius: var(--radius); font-size: 0.8rem; outline: none;
+    .action-group { display: flex; align-items: center; gap: 10px; }
+    .btn-core {
+      background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border-dark);
+      color: var(--text-light); padding: 8px 16px; border-radius: var(--radius-md);
+      font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: all 0.2s var(--transition-fluid);
     }
-    .sidebar-btn {
-      display: block; width: 100%; text-align: left; background: none; border: none;
-      color: var(--text-main); padding: 8px; border-radius: var(--radius); cursor: pointer; font-size: 0.85rem; margin-top: 4px;
-    }
-    .sidebar-btn.active { background: #f0f0f0; font-weight: 500; }
-    .sidebar-btn:hover:not(.active) { background: #f9f9f9; }
+    .btn-core:hover { background: rgba(255, 255, 255, 0.08); border-color: #3b3e42; }
+    .btn-core.primary { background: var(--accent); color: var(--surface-bg); border: none; font-weight: 600; }
+    .btn-core.primary:hover { background: var(--accent-hover); }
 
-    /* ── ZONE D'ÉDITION ── */
-    #workspace-area { flex: 1; overflow-y: auto; display: flex; flex-direction: column; align-items: center; padding: 40px 20px 100px; }
-    #manuscript-wrapper { width: 100%; max-width: 700px; }
-    .info-bar-top { text-align: center; margin-bottom: 20px; font-size: 0.7rem; color: var(--text-muted); }
-
-    #paper-sheet {
-      background: #ffffff; border: 1px solid var(--border); border-radius: var(--radius); padding: 60px 50px; min-height: 800px;
+    /* DISPOSITION DES TRIPLE PANNEAUX */
+    #main-layout {
+      display: grid;
+      grid-template-columns: var(--sidebar-left-width) 1fr var(--sidebar-right-width);
+      overflow: hidden;
+      position: relative;
     }
 
-    #input-book-title { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; width: 100%; border: none; outline: none; text-align: center; color: var(--text-main); background: transparent; margin-bottom: 5px; }
-    #input-book-author { font-family: 'Playfair Display', serif; font-size: 1rem; font-style: italic; width: 100%; border: none; outline: none; text-align: center; color: var(--text-muted); background: transparent; margin-bottom: 40px; }
-    #input-chapter-title { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 700; width: 100%; border: none; outline: none; color: var(--text-main); background: transparent; margin-bottom: 20px; }
+    /* PANNEAU STRUCTURAL GAUCHE */
+    aside.sidebar-left {
+      background: var(--surface-panel); border-right: 1px solid var(--border-dark);
+      display: flex; flex-direction: column; transition: transform 0.4s var(--transition-fluid);
+    }
+
+    /* ESPACE CENTRAL D'ÉCRITURE */
+    main.workspace-canvas {
+      background: var(--surface-canvas); overflow-y: auto;
+      display: flex; flex-direction: column; align-items: center;
+      padding: 40px 24px; position: relative;
+    }
+    .canvas-container { width: 100%; max-width: 720px; }
+    .info-bar-top { text-align: center; margin-bottom: 24px; font-size: 0.75rem; color: var(--text-muted-light); font-weight: 500; }
     
-    #main-editor {
-      width: 100%; min-height: 500px; border: none; outline: none; resize: none;
-      font-family: 'Times New Roman', Times, serif; font-size: 12pt; line-height: 2;
-      color: var(--text-main); background: transparent;
+    /* FEUILLE DE MANUSCRIT */
+    .document-paper {
+      background: var(--surface-paper); border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm); min-height: 850px; padding: 70px 60px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
     }
 
-    /* ── PANNEAU DROIT ── */
-    #sidebar-right {
-      width: 280px; background: var(--bg-panel); display: flex; flex-direction: column; border-left: 1px solid var(--border);
+    /* ENTRÉES DU TEXTE */
+    #input-book-title { font-family: 'Playfair Display', serif; font-size: 2.2rem; font-weight: 700; width: 100%; border: none; outline: none; text-align: center; color: var(--text-dark); background: transparent; margin-bottom: 6px; }
+    #input-book-author { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-style: italic; width: 100%; border: none; outline: none; text-align: center; color: var(--text-muted-light); background: transparent; margin-bottom: 50px; }
+    #input-chapter-title { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 700; width: 100%; border: none; outline: none; color: var(--text-dark); background: transparent; margin-bottom: 25px; border-bottom: 1px solid #f0f0f0; padding-bottom: 8px; }
+    #main-editor { width: 100%; min-height: 550px; border: none; outline: none; resize: none; font-family: 'Times New Roman', Times, serif; font-size: 12pt; line-height: 2; color: var(--text-dark); background: transparent; text-align: justify; }
+
+    /* PANNEAU STRUCTURAL DROIT */
+    aside.sidebar-right {
+      background: var(--surface-panel); border-left: 1px solid var(--border-dark);
+      display: flex; flex-direction: column; transition: transform 0.4s var(--transition-fluid);
     }
-    .tab-header { display: flex; border-bottom: 1px solid var(--border); }
-    .tab-link { flex: 1; padding: 12px 4px; border: none; background: none; font-size: 0.75rem; color: var(--text-muted); cursor: pointer; text-align: center; font-weight: 500; }
-    .tab-link.active { color: var(--text-main); border-bottom: 2px solid var(--text-main); }
+
+    /* ÉLÉMENTS INTERNES DES PANNEAUX */
+    .panel-header { height: 50px; border-bottom: 1px solid var(--border-dark); display: flex; align-items: center; padding: 0 16px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted-dark); }
+    .panel-body { flex: 1; padding: 20px; overflow-y: auto; }
     
+    /* SYSTÈME D'ONGLETS POUR LE PANNEAU DROIT */
+    .tab-header { display: flex; background: var(--surface-nav); border-bottom: 1px solid var(--border-dark); }
+    .tab-link { flex: 1; padding: 14px 4px; border: none; background: none; font-size: 0.75rem; color: var(--text-muted-dark); cursor: pointer; text-align: center; font-weight: 600; text-transform: uppercase; }
+    .tab-link.active { color: var(--accent); border-bottom: 2px solid var(--accent); background: var(--surface-panel); }
     .tab-pane { display: none; padding: 20px; flex: 1; overflow-y: auto; }
     .tab-pane.active { display: block; }
 
-    /* ZONE COUVERTURE */
+    /* PREVIEW DE LA COUVERTURE PREMIUM */
     #cover-viewport {
-      width: 100%; aspect-ratio: 6/9; background: #eaeaea; color: var(--text-main);
-      border: 1px solid var(--border); display: flex; flex-direction: column; align-items: center;
-      padding: 20px; position: relative; overflow: hidden; background-size: cover; background-position: center;
+      width: 100%; aspect-ratio: 6/9; background: #222; color: #fff;
+      border: 1px solid var(--border-dark); border-radius: var(--radius-md); display: flex; flex-direction: column; align-items: center;
+      padding: 24px; position: relative; overflow: hidden; background-size: cover; background-position: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
     }
-    .cover-actions { position: absolute; top: 10px; right: 10px; display: flex; gap: 4px; z-index: 5; }
-    .btn-cover-src { background: #ffffff; border: 1px solid var(--border); color: var(--text-main); padding: 4px 8px; font-size: 0.65rem; cursor: pointer; }
-    .btn-cover-src:hover { background: #f0f0f0; }
+    #cover-viewport::before { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0.3); z-index: 1; }
+    .cover-actions { position: absolute; top: 12px; right: 12px; display: flex; gap: 6px; z-index: 5; }
+    .btn-cover-src { background: rgba(0,0,0,0.7); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 6px 10px; font-size: 0.7rem; border-radius: 4px; cursor: pointer; backdrop-filter: blur(4px); }
     
-    #live-cover-title { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 700; text-align: center; margin-top: auto; margin-bottom: 6px; background: rgba(255,255,255,0.8); padding: 2px 5px; }
-    #live-cover-author { font-family: 'Playfair Display', serif; font-style: italic; font-size: 0.9rem; text-align: center; margin-bottom: auto; background: rgba(255,255,255,0.8); padding: 2px 5px;}
-    .cover-footer-text { font-size: 0.55rem; color: var(--text-muted); text-align: center; margin-top: 10px; }
+    #live-cover-title { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; text-align: center; margin-top: auto; margin-bottom: 8px; z-index: 2; color: var(--accent); text-shadow: 0 2px 8px rgba(0,0,0,0.8); }
+    #live-cover-author { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1rem; text-align: center; margin-bottom: auto; z-index: 2; text-shadow: 0 2px 6px rgba(0,0,0,0.8); }
 
-    /* ── POPUP FORMAT TEXTE ── */
-    #format-popup {
-      position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-      background: var(--bg-panel); color: var(--text-main); border: 1px solid var(--border); border-radius: var(--radius);
-      padding: 20px; width: 280px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-      z-index: 110; display: none;
-    }
-    #format-popup.show { display: block; }
-    .popup-title { font-size: 0.8rem; font-weight: 600; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 15px; }
-    .popup-field { margin-bottom: 12px; }
-    .popup-field label { display: block; font-size: 0.7rem; color: var(--text-muted); margin-bottom: 4px; }
-    .popup-field select { width: 100%; background: #fff; border: 1px solid var(--border); padding: 6px; border-radius: 4px; font-size: 0.8rem; }
-    .popup-buttons { display: flex; gap: 8px; margin-top: 20px; }
-    .btn-pop { flex: 1; padding: 8px; border: 1px solid var(--border); background: transparent; cursor: pointer; font-size: 0.8rem; }
-    .btn-pop.apply { background: var(--accent); color: #fff; border-color: var(--accent); }
-    .btn-pop.cancel:hover { background: #f0f0f0; }
+    /* FENÊTRES CONTEXTUELLES MODAL (AJUSTEMENT FORMAT / CONFIG) */
+    .app-overlay { position: fixed; inset: 0; background: rgba(8, 9, 10, 0.5); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); z-index: 200; display: none; align-items: center; justify-content: center; }
+    .app-overlay.show { display: flex; }
+    .modal-window { background: var(--surface-panel); border: 1px solid var(--border-dark); border-radius: var(--radius-lg); width: 100%; max-width: 400px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); overflow: hidden; }
+    .modal-header { padding: 16px 20px; border-bottom: 1px solid var(--border-dark); display: flex; justify-content: space-between; align-items: center; }
+    .modal-title { font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--accent); }
+    .modal-body { padding: 20px; }
 
-    /* ── POPUP EXPORT ── */
-    #export-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.2); z-index: 120; align-items: center; justify-content: center; }
-    #export-overlay.show { display: flex; }
-    .export-card { background: var(--bg-panel); padding: 25px; border-radius: var(--radius); border: 1px solid var(--border); width: 320px; text-align: center; }
-    .export-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 15px; }
-    .btn-exp { padding: 10px; border: 1px solid var(--border); background: transparent; cursor: pointer; font-size: 0.8rem; }
-    .btn-exp.dark { background: var(--text-main); color: #fff; border-color: var(--text-main); }
-    .btn-exp:hover { opacity: 0.9; }
+    .field-group { margin-bottom: 16px; }
+    .field-group label { display: block; font-size: 0.7rem; color: var(--text-muted-dark); margin-bottom: 6px; text-transform: uppercase; }
+    .field-group select { width: 100%; background: var(--surface-bg); border: 1px solid var(--border-dark); color: #fff; padding: 10px; border-radius: var(--radius-sm); font-size: 0.85rem; outline: none; }
 
-    /* ── NAVIGATION MOBILE ── */
-    #mobile-bottom-bar {
-      display: none; position: fixed; bottom: 0; left: 0; right: 0; height: 55px;
-      background: var(--bg-panel); border-top: 1px solid var(--border);
-      z-index: 100; justify-content: space-around; align-items: center;
-    }
-    .m-nav-item {
-      background: none; border: none; color: var(--text-muted); font-size: 0.65rem;
-      display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer; flex: 1;
-    }
-    .m-nav-item.active { color: var(--accent); font-weight: 600; }
-    .m-nav-item .icon { font-size: 1.1rem; }
+    /* BARRE DE NAV BASSE MOBILE (STYLE IPHONE NATIVE) */
+    nav.mobile-bottom-nav { display: none; }
 
-    /* ── RESPONSIVE MOBILE ── */
-    @media (max-width: 900px) {
-      #sidebar-left, #sidebar-right { display: none !important; }
-      #mobile-bottom-bar { display: flex; }
-      #topbar .tb-btn:not(.primary) { display: none; }
-
-      body.view-format #format-popup { display: block; }
-      body.view-ia #sidebar-right { display: flex !important; position: fixed; inset: 50px 0 55px 0; width: 100%; z-index: 95; }
+    /* ── ADAPTATION SMARTPHONE ET TABLETTE (RESPONSIVE ENGINE) ── */
+    @media (max-width: 1024px) {
+      #main-layout { grid-template-columns: 1fr; }
       
-      #workspace-area { padding: 20px 15px 80px; }
-      #paper-sheet { padding: 20px 15px; border: none; }
+      aside.sidebar-left, aside.sidebar-right {
+        position: fixed; top: var(--topbar-height); bottom: 0; width: 290px; z-index: 150;
+      }
+      aside.sidebar-left { left: 0; transform: translateX(-100%); }
+      aside.sidebar-right { right: 0; transform: translateX(100%); }
+
+      /* Trigger d'ouverture fluide via injection de classe */
+      body.left-open aside.sidebar-left { transform: translateX(0); }
+      body.right-open aside.sidebar-right { transform: translateX(0); }
+
+      nav.mobile-bottom-nav {
+        display: flex; position: fixed; bottom: 0; left: 0; right: 0;
+        height: var(--mobile-bar-height); background: var(--surface-nav);
+        border-top: 1px solid var(--border-dark); z-index: 160;
+        padding-bottom: env(safe-area-inset-bottom); /* Gère l'encoche du bas iPhone/Galaxy */
+      }
+      .m-nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; background: none; border: none; color: var(--text-muted-dark); gap: 4px; cursor: pointer; }
+      .m-nav-btn.active { color: var(--accent); font-weight: 600; }
+      .m-nav-btn .icon { font-size: 1.25rem; }
+      .m-nav-btn .label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.3px; }
+
+      main.workspace-canvas { padding: 16px 12px calc(var(--mobile-bar-height) + 20px); }
+      .document-paper { padding: 40px 24px; border: none; border-radius: var(--radius-md); box-shadow: none; }
+      #input-book-title { font-size: 1.8rem; }
+      
+      header.main-header .action-group .btn-core:not(.primary) { display: none; }
     }
   </style>
 </head>
-<body class="view-ecrire">
+<body class="view-write">
 
-  <div id="topbar">
-    <div class="logo">PublishReady</div>
-    <button class="tb-btn" onclick="alert('Nouveau Chapitre Créé')">Nouveau Chapitre</button>
-    <button class="tb-btn" onclick="openFormat()">Format</button>
-    <div class="spacer"></div>
-    <span id="word-count">0 mots</span>
-    <button class="tb-btn primary" onclick="toggleExport(true)">Exporter</button>
-  </div>
-
-  <div id="main-container">
-
-    <div id="sidebar-left">
-      <div class="section-box">
-        <div class="section-label">Format de sortie</div>
-        <select class="custom-select">
-          <option>Amazon KDP (6×9 in)</option>
-          <option>Édition Standard</option>
-        </select>
+  <div id="app-shell">
+    
+    <header class="main-header">
+      <div class="brand-space">
+        <div class="brand-logo">Publish<span>Ready</span></div>
       </div>
-      <div class="section-box">
-        <div class="section-label">Structure</div>
-        <button class="sidebar-btn active">Chapitre Un</button>
+      <div class="action-group">
+        <button class="btn-core" onclick="ui.openModal('format-modal')">Format</button>
+        <div class="btn-core" id="word-count" style="cursor: default;">0 mots</div>
+        <button class="btn-core primary" onclick="ui.openModal('export-modal')">Exporter</button>
       </div>
-    </div>
+    </header>
 
-    <div id="workspace-area">
-      <div id="manuscript-wrapper">
-        <div class="info-bar-top">Broché 6×9 po · Times New Roman 12pt · Interligne double</div>
-        
-        <div id="paper-sheet">
-          <input id="input-book-title" type="text" placeholder="Titre du livre" value="Mon Livre" oninput="syncText()">
-          <input id="input-book-author" type="text" placeholder="Nom de l'auteur" value="Auteur" oninput="syncText()">
-          
-          <input id="input-chapter-title" type="text" placeholder="Chapitre Un" value="Chapitre Un">
-          <textarea id="main-editor" placeholder="Commencez à écrire ici..." oninput="countWords()"></textarea>
-        </div>
-      </div>
-    </div>
-
-    <div id="sidebar-right">
-      <div class="tab-header">
-        <button class="tab-link active" id="btn-tab-cover" onclick="switchRightTab('cover')">Couverture</button>
-        <button class="tab-link" id="btn-tab-ai" onclick="switchRightTab('ai')">Validation</button>
-      </div>
-
-      <div class="tab-pane active" id="pane-cover">
-        <div id="cover-viewport">
-          <div class="cover-actions">
-            <button class="btn-cover-src" onclick="triggerFilePicker()">Galerie</button>
-            <button class="btn-cover-src" onclick="triggerUrlPrompt()">URL</button>
+    <div id="main-layout">
+      
+      <aside class="sidebar-left">
+        <div class="panel-header">Configuration du Projet</div>
+        <div class="panel-body">
+          <div class="field-group">
+            <label>Format cible KDP</label>
+            <select class="field-group select" style="width: 100%;">
+              <option>Amazon KDP (6×9 po)</option>
+              <option>Roman Standard A5</option>
+            </select>
           </div>
-          <div id="live-cover-title">Mon Livre</div>
-          <div id="live-cover-author">par Auteur</div>
+          <div class="panel-header" style="height: auto; padding: 10px 0; margin-top: 20px;">Index des Chapitres</div>
+          <button class="btn-core" style="width: 100%; text-align: left; background: rgba(255,255,255,0.02); color: var(--accent); border-color: rgba(223,183,67,0.2);">📄 Chapitre Un</button>
         </div>
-        <div class="cover-footer-text">Aperçu KDP (300 DPI)</div>
-        <input type="file" id="hidden-file-input" accept="image/*" style="display: none;" onchange="loadLocalImage(event)">
-      </div>
+      </aside>
 
-      <div class="tab-pane" id="pane-ai">
-        <button class="tb-btn" style="width:100%; margin-bottom:15px;" onclick="alert('Vérification effectuée.')">Vérifier le document</button>
-        <p style="font-size:0.75rem; color:var(--text-muted);">Format conforme aux standards KDP.</p>
-      </div>
-    </div>
+      <main class="workspace-canvas">
+        <div class="canvas-container">
+          <div class="info-bar-top">Format d'Impression Certifié (300 DPI)</div>
+          
+          <article class="document-paper">
+            <input id="input-book-title" type="text" placeholder="Titre de l'œuvre" value="Mon Livre" oninput="engine.syncText()">
+            <input id="input-book-author" type="text" placeholder="Nom de l'auteur" value="Auteur" oninput="engine.syncText()">
+            
+            <input id="input-chapter-title" type="text" placeholder="Titre du Chapitre" value="Chapitre Un">
+            <textarea id="main-editor" placeholder="Commencez votre écriture professionnelle ici..." oninput="engine.countWords()"></textarea>
+          </article>
+        </div>
+      </main>
 
-  </div>
+      <aside class="sidebar-right">
+        <div class="tab-header">
+          <button class="tab-link active" id="tab-btn-cover" onclick="ui.switchRightTab('cover')">Couverture</button>
+          <button class="tab-link" id="tab-btn-check" onclick="ui.switchRightTab('check')">Validation</button>
+        </div>
 
-  <div id="format-popup">
-    <div class="popup-title">Paramètres du texte</div>
-    <div class="popup-field">
-      <label>Police</label>
-      <select id="f-family">
-        <option value="'Times New Roman', Times, serif">Times New Roman</option>
-        <option value="Georgia, serif">Georgia</option>
-        <option value="Arial, sans-serif">Arial</option>
-      </select>
-    </div>
-    <div class="popup-field">
-      <label>Taille</label>
-      <select id="f-size">
-        <option value="12pt">12pt</option>
-        <option value="11pt">11pt</option>
-      </select>
-    </div>
-    <div class="popup-field">
-      <label>Interligne</label>
-      <select id="f-lineheight">
-        <option value="2">Double</option>
-        <option value="1.5">1.5</option>
-        <option value="1.15">Simple</option>
-      </select>
-    </div>
-    <div class="popup-buttons">
-      <button class="btn-pop apply" onclick="applyFormatting()">Appliquer</button>
-      <button class="btn-pop cancel" onclick="closeFormat()">Annuler</button>
-    </div>
-  </div>
+        <div class="tab-pane active" id="pane-cover">
+          <div id="cover-viewport">
+            <div class="cover-actions">
+              <button class="btn-cover-src" onclick="document.getElementById('file-picker').click()">Fichier</button>
+              <button class="btn-cover-src" onclick="engine.loadUrlCover()">Lien</button>
+            </div>
+            <div id="live-cover-title">Mon Livre</div>
+            <div id="live-cover-author">par Auteur</div>
+          </div>
+          <p style="font-size: 0.7rem; color: var(--text-muted-dark); text-align: center; margin-top: 15px; text-transform: uppercase;">Aperçu Impression 6x9</p>
+          <input type="file" id="file-picker" accept="image/*" style="display: none;" onchange="engine.loadLocalCover(event)">
+        </div>
 
-  <div id="export-overlay">
-    <div class="export-card">
-      <h3 style="margin-bottom:15px; font-size:1rem;">Options d'exportation</h3>
-      <div class="export-actions">
-        <button class="btn-exp dark" onclick="alert('Création du PDF...')">PDF pour impression</button>
-        <button class="btn-exp dark" onclick="alert('Création de l\'ePub...')">ePub (Numérique)</button>
-        <button class="btn-exp" onclick="toggleExport(false)">Fermer</button>
-      </div>
+        <div class="tab-pane" id="pane-check">
+          <button class="btn-core primary" style="width: 100%; margin-bottom: 15px;" onclick="alert('Analyse de la mise en page lancée.')">Vérifier le manuscrit</button>
+          <p style="font-size: 0.8rem; color: var(--text-muted-dark); line-height: 1.5;">Le gabarit respecte actuellement les marges intérieures de fond perdu pour l'impression brochée Amazon KDP.</p>
+        </div>
+      </aside>
+
     </div>
   </div>
 
-  <div id="mobile-bottom-bar">
-    <button class="m-nav-item active" id="m-btn-ecrire" onclick="switchMobileView('ecrire')">
-      <span class="icon">✍️</span><span>Écrire</span>
+  <nav class="mobile-bottom-nav">
+    <button class="m-nav-btn active" id="mb-write" onclick="ui.switchMobileView('write')">
+      <span class="icon">✍️</span><span class="label">Écrire</span>
     </button>
-    <button class="m-nav-item" id="m-btn-format" onclick="switchMobileView('format')">
-      <span class="icon">Aa</span><span>Format</span>
+    <button class="m-nav-btn" id="mb-struct" onclick="ui.switchMobileView('structure')">
+      <span class="icon">📁</span><span class="label">Structure</span>
     </button>
-    <button class="m-nav-item" id="m-btn-ia" onclick="switchMobileView('ia')">
-      <span class="icon">🖼️</span><span>Couverture</span>
+    <button class="m-nav-btn" id="mb-tools" onclick="ui.switchMobileView('tools')">
+      <span class="icon">🖼️</span><span class="label">Visuel</span>
     </button>
-    <button class="m-nav-item" onclick="toggleExport(true)">
-      <span class="icon">📥</span><span>Exporter</span>
+    <button class="m-nav-btn" onclick="ui.openModal('export-modal')">
+      <span class="icon">📥</span><span class="label">Export</span>
     </button>
+  </nav>
+
+  <div class="app-overlay" id="format-modal" onclick="ui.closeModalOutside(event)">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h3 class="modal-title">Paramètres Typographiques</h3>
+        <button class="btn-core" style="padding: 4px 10px;" onclick="ui.closeModal('format-modal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="field-group">
+          <label>Police de caractères</label>
+          <select id="f-family">
+            <option value="'Times New Roman', Times, serif">Times New Roman (KDP Standard)</option>
+            <option value="Georgia, serif">Georgia (Luxe)</option>
+            <option value="Arial, sans-serif">Arial (Moderne)</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label>Taille du corps</label>
+          <select id="f-size">
+            <option value="12pt">12pt (Édition)</option>
+            <option value="11pt">11pt (Économique)</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label>Interligne</label>
+          <select id="f-lineheight">
+            <option value="2">Double (Standard Manuscrit)</option>
+            <option value="1.5">1.5 (Confort Lecture)</option>
+          </select>
+        </div>
+        <button class="btn-core primary" style="width: 100%; margin-top: 10px;" onclick="engine.applyFormatting()">Appliquer les styles</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="app-overlay" id="export-modal" onclick="ui.closeModalOutside(event)">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h3 class="modal-title">Génération des fichiers</h3>
+        <button class="btn-core" style="padding: 4px 10px;" onclick="ui.closeModal('export-modal')">✕</button>
+      </div>
+      <div class="modal-body" style="display: flex; flex-direction: column; gap: 10px;">
+        <button class="btn-core primary" style="padding: 12px;" onclick="alert('Compilation du fichier PDF pré-presse...')">Exporter au format PDF (Prêt à imprimer)</button>
+        <button class="btn-core" style="padding: 12px;" onclick="alert('Compilation de l\'ePub numérique...')">Exporter au format ePub (Kindle)</button>
+      </div>
+    </div>
   </div>
 
   <script>
-    function syncText() {
-      const titleVal = document.getElementById('input-book-title').value;
-      const authorVal = document.getElementById('input-book-author').value;
-      document.getElementById('live-cover-title').innerText = titleVal || "Mon Livre";
-      document.getElementById('live-cover-author').innerText = authorVal ? "par " + authorVal : "Auteur";
-    }
+    const ui = {
+      openModal(id) { document.getElementById(id).classList.add('show'); },
+      closeModal(id) { document.getElementById(id).classList.remove('show'); },
+      closeModalOutside(e) { if(e.target.classList.contains('app-overlay')) e.target.classList.remove('show'); },
+      
+      switchRightTab(tab) {
+        document.getElementById('tab-btn-cover').classList.remove('active');
+        document.getElementById('tab-btn-check').classList.remove('active');
+        document.getElementById('pane-cover').classList.remove('active');
+        document.getElementById('pane-check').classList.remove('active');
 
-    function countWords() {
-      const text = document.getElementById('main-editor').value.trim();
-      const count = text ? text.split(/\s+/).length : 0;
-      document.getElementById('word-count').innerText = count + " mots";
-    }
+        if(tab === 'cover') {
+          document.getElementById('tab-btn-cover').classList.add('active');
+          document.getElementById('pane-cover').classList.add('active');
+        } else {
+          document.getElementById('tab-btn-check').classList.add('active');
+          document.getElementById('pane-check').classList.add('active');
+        }
+      },
 
-    function triggerFilePicker() { document.getElementById('hidden-file-input').click(); }
-    function loadLocalImage(event) {
-      const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) { document.getElementById('cover-viewport').style.backgroundImage = `url('${e.target.result}')`; };
-        reader.readAsDataURL(file);
+      switchMobileView(view) {
+        document.body.classList.remove('left-open', 'right-open');
+        document.querySelectorAll('.m-nav-btn').forEach(b => b.classList.remove('active'));
+        
+        if(view === 'write') {
+          document.getElementById('mb-write').classList.add('active');
+        } else if(view === 'structure') {
+          document.getElementById('mb-struct').classList.add('active');
+          document.body.classList.add('left-open');
+        } else if(view === 'tools') {
+          document.getElementById('mb-tools').classList.add('active');
+          document.body.classList.add('right-open');
+          this.switchRightTab('cover');
+        }
       }
-    }
+    };
 
-    function triggerUrlPrompt() {
-      const url = prompt("URL de l'image :");
-      if (url) document.getElementById('cover-viewport').style.backgroundImage = `url('${url}')`;
-    }
-
-    function openFormat() { document.getElementById('format-popup').classList.add('show'); }
-    function closeFormat() { document.getElementById('format-popup').classList.remove('show'); }
-    
-    function applyFormatting() {
-      const editor = document.getElementById('main-editor');
-      editor.style.fontFamily = document.getElementById('f-family').value;
-      editor.style.fontSize = document.getElementById('f-size').value;
-      editor.style.lineHeight = document.getElementById('f-lineheight').value;
-      closeFormat();
-      if(document.body.classList.contains('view-format')) switchMobileView('ecrire');
-    }
-
-    function switchRightTab(tab) {
-      document.querySelectorAll('.tab-link').forEach(el => el.classList.remove('active'));
-      document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
-      if(tab === 'cover') {
-        document.getElementById('btn-tab-cover').classList.add('active');
-        document.getElementById('pane-cover').classList.add('active');
-      } else {
-        document.getElementById('btn-tab-ai').classList.add('active');
-        document.getElementById('pane-ai').classList.add('active');
+    const engine = {
+      syncText() {
+        const title = document.getElementById('input-book-title').value;
+        const author = document.getElementById('input-book-author').value;
+        document.getElementById('live-cover-title').innerText = title || "Mon Livre";
+        document.getElementById('live-cover-author').innerText = author ? "par " + author : "Auteur";
+      },
+      countWords() {
+        const text = document.getElementById('main-editor').value.trim();
+        const count = text ? text.split(/\s+/).length : 0;
+        document.getElementById('word-count').innerText = count + " mots";
+      },
+      loadLocalCover(e) {
+        const file = e.target.files[0];
+        if (file) {
+          const r = new FileReader();
+          r.onload = function(evt) { document.getElementById('cover-viewport').style.backgroundImage = `url('${evt.target.result}')`; };
+          r.readAsDataURL(file);
+        }
+      },
+      loadUrlCover() {
+        const url = prompt("URL absolue de l'image de couverture :");
+        if (url) document.getElementById('cover-viewport').style.backgroundImage = `url('${url}')`;
+      },
+      applyFormatting() {
+        const ed = document.getElementById('main-editor');
+        ed.style.fontFamily = document.getElementById('f-family').value;
+        ed.style.fontSize = document.getElementById('f-size').value;
+        ed.style.lineHeight = document.getElementById('f-lineheight').value;
+        ui.closeModal('format-modal');
       }
-    }
-
-    function switchMobileView(view) {
-      document.body.classList.remove('view-ecrire', 'view-format', 'view-ia');
-      document.querySelectorAll('.m-nav-item').forEach(el => el.classList.remove('active'));
-      closeFormat();
-
-      if (view === 'ecrire') {
-        document.body.classList.add('view-ecrire');
-        document.getElementById('m-btn-ecrire').classList.add('active');
-      } else if (view === 'format') {
-        document.body.classList.add('view-format');
-        document.getElementById('m-btn-format').classList.add('active');
-        openFormat();
-      } else if (view === 'ia') {
-        document.body.classList.add('view-ia');
-        document.getElementById('m-btn-ia').classList.add('active');
-        switchRightTab('cover');
-      }
-    }
-
-    function toggleExport(show) { document.getElementById('export-overlay').style.display = show ? 'flex' : 'none'; }
+    };
   </script>
 </body>
 </html>
