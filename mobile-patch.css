@@ -159,4 +159,5 @@ html, body { overflow-x: hidden; }
   #editor-frame { padding: 14px 10px !important; }
   #main-editor { font-size: 0.95rem !important; }
   #sidebar.open { grid-template-columns: 1fr; }
-}
+               }
+     
