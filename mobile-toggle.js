@@ -1,133 +1,162 @@
 /* ============================================================
-   PUBLISHREADY — MOBILE TOGGLE SCRIPT v2
-   - Sidebar/panel ouvrable et fermable
-   - Fermeture en touchant l'éditeur
-   - Sidebar scrollable horizontalement
+   PUBLISHREADY — MOBILE RESPONSIVE PATCH v2
    ============================================================ */
 
-(function () {
-  function isMobile() { return window.innerWidth <= 768; }
+* { box-sizing: border-box; }
+html, body { overflow-x: hidden; }
 
-  function injectBottomNav() {
-    if (document.getElementById('mobile-bottom-nav')) return;
-    const nav = document.createElement('div');
-    nav.className = 'mobile-bottom-nav';
-    nav.id = 'mobile-bottom-nav';
-    nav.innerHTML = `
-      <button id="btn-nav-edit" class="active" onclick="mobileToggle('editor')">
-        <span class="nav-icon">✍️</span>Écrire
-      </button>
-      <button id="btn-nav-sidebar" onclick="mobileToggle('sidebar')">
-        <span class="nav-icon">⚙️</span>Format
-      </button>
-      <button id="btn-nav-panel" onclick="mobileToggle('panel')">
-        <span class="nav-icon">🤖</span>IA / Cover
-      </button>
-      <button id="btn-nav-export" onclick="openDownload()">
-        <span class="nav-icon">⬇️</span>Exporter
-      </button>
-    `;
-    document.body.appendChild(nav);
+/* ============================================================
+   TABLETTE (≤ 1024px)
+   ============================================================ */
+@media (max-width: 1024px) {
+  #main { flex-direction: column !important; }
+  #sidebar {
+    width: 100% !important;
+    height: auto !important;
+    overflow-x: auto;
+    overflow-y: visible;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 12px;
+    border-right: none !important;
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+  }
+  #right-panel { width: 100% !important; }
+  #editor-area { padding: 16px 8px !important; }
+}
+
+/* ============================================================
+   MOBILE (≤ 768px)
+   ============================================================ */
+@media (max-width: 768px) {
+
+  #topbar {
+    position: sticky !important;
+    top: 0;
+    z-index: 100;
+    padding: 8px 10px !important;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    flex-wrap: nowrap;
+  }
+  #topbar::-webkit-scrollbar { display: none; }
+  #topbar .logo { font-size: 0.88rem !important; white-space: nowrap; flex-shrink: 0; }
+  .tb-btn { font-size: 0.68rem !important; padding: 5px 8px !important; white-space: nowrap; flex-shrink: 0; }
+  #word-count { display: none; }
+
+  #main { flex-direction: column !important; position: relative; }
+
+  /* ── SIDEBAR : masquée par défaut ── */
+  #sidebar {
+    width: 100% !important;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+    padding: 0 !important;
+    border-right: none !important;
+    border-bottom: none;
+    /* scroll horizontal pour atteindre tous les contrôles */
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
-  function injectOverlay() {
-    if (document.getElementById('mobile-overlay')) return;
-    const overlay = document.createElement('div');
-    overlay.id = 'mobile-overlay';
-    overlay.style.cssText = `
-      display:none; position:fixed; inset:0; z-index:89;
-      background:rgba(0,0,0,0.01);
-    `;
-    // Toucher l'overlay (= toucher l'éditeur) ferme tout
-    overlay.addEventListener('click', function () {
-      closeAll();
-    });
-    document.body.appendChild(overlay);
+  #sidebar.open {
+    max-height: 75vh;
+    overflow-y: auto;
+    overflow-x: auto;
+    padding: 10px 12px !important;
+    border-bottom: 1px solid rgba(255,255,255,0.15) !important;
+    /* deux colonnes pour les groupes de réglages */
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    align-items: start;
   }
 
-  let currentView = 'editor';
+  .sidebar-section { grid-column: 1 / -1; }
+  .format-group { padding: 6px 8px !important; }
+  .sidebar-label { font-size: 0.6rem !important; }
+  .sidebar-btn { font-size: 0.78rem !important; padding: 6px 8px !important; }
 
-  function closeAll() {
-    const sidebar = document.getElementById('sidebar');
-    const rp = document.getElementById('right-panel');
-    const overlay = document.getElementById('mobile-overlay');
-    if (sidebar) sidebar.classList.remove('open');
-    if (rp) rp.classList.remove('open');
-    if (overlay) overlay.style.display = 'none';
-    currentView = 'editor';
-    updateNavButtons('editor');
+  /* ── RIGHT PANEL : masqué par défaut ── */
+  #right-panel {
+    width: 100% !important;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    border-left: none !important;
+    border-top: 1px solid transparent;
+  }
+  #right-panel.open {
+    max-height: 80vh;
+    overflow-y: auto;
+    border-top-color: #d4a520;
   }
 
-  window.mobileToggle = function (view) {
-    if (!isMobile()) return;
+  /* Éditeur */
+  #editor-area { padding: 12px 8px !important; }
+  #editor-frame { padding: 20px 14px !important; min-height: auto; }
+  #main-editor { font-size: 1rem !important; line-height: 1.8 !important; }
 
-    const sidebar = document.getElementById('sidebar');
-    const rp = document.getElementById('right-panel');
-    const overlay = document.getElementById('mobile-overlay');
+  /* Modal export */
+  #modal { padding: 24px 16px !important; }
+  .modal-actions { flex-direction: column; }
+  .modal-btn { width: 100% !important; margin-bottom: 6px; }
 
-    // Même bouton = ferme tout
-    if (view === currentView && view !== 'editor') {
-      closeAll();
-      return;
-    }
+  /* Cover */
+  #cover-preview { max-width: 200px !important; margin: 0 auto !important; }
 
-    currentView = view;
+  /* Status bar */
+  .status-bar { font-size: 0.62rem !important; flex-wrap: wrap; gap: 4px; padding: 4px 8px; }
 
-    if (view === 'editor') {
-      closeAll();
-      return;
-    }
+  /* Tap targets */
+  button, [role="button"] { min-height: 40px; min-width: 40px; }
 
-    if (view === 'sidebar') {
-      const isOpen = sidebar && sidebar.classList.contains('open');
-      closeAll();
-      if (!isOpen) {
-        sidebar && sidebar.classList.add('open');
-        if (overlay) overlay.style.display = 'block';
-        currentView = 'sidebar';
-      }
-    } else if (view === 'panel') {
-      const isOpen = rp && rp.classList.contains('open');
-      closeAll();
-      if (!isOpen) {
-        rp && rp.classList.add('open');
-        if (overlay) overlay.style.display = 'block';
-        currentView = 'panel';
-      }
-    }
-
-    updateNavButtons(currentView);
-  };
-
-  function updateNavButtons(view) {
-    ['edit', 'sidebar', 'panel', 'export'].forEach(id => {
-      const btn = document.getElementById('btn-nav-' + id);
-      if (btn) btn.classList.remove('active');
-    });
-    const map = { editor: 'edit', sidebar: 'sidebar', panel: 'panel' };
-    const activeBtn = document.getElementById('btn-nav-' + (map[view] || 'edit'));
-    if (activeBtn) activeBtn.classList.add('active');
+  /* ── Barre de navigation mobile en bas ── */
+  .mobile-bottom-nav {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    z-index: 95;
+    background: #1a1814;
+    border-top: 1px solid #b8860b;
+    padding-bottom: env(safe-area-inset-bottom);
   }
-
-  function setup() {
-    if (isMobile()) {
-      injectBottomNav();
-      injectOverlay();
-    }
+  .mobile-bottom-nav button {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    font-size: 0.58rem !important;
+    padding: 6px 0 !important;
+    background: none !important;
+    border: none !important;
+    cursor: pointer;
+    color: #888;
+    transition: color 0.15s;
+    font-family: 'Inter', sans-serif;
+    min-height: unset !important;
   }
+  .mobile-bottom-nav button.active { color: #d4a520; }
+  .mobile-bottom-nav button .nav-icon { font-size: 1.2rem; line-height: 1; }
 
-  window.addEventListener('resize', function () {
-    if (isMobile()) {
-      injectBottomNav();
-      injectOverlay();
-    } else {
-      closeAll();
-    }
-  });
+  body { padding-bottom: calc(56px + env(safe-area-inset-bottom)); }
+}
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', setup);
-  } else {
-    setup();
-  }
-})();
+/* ============================================================
+   TRÈS PETITS ÉCRANS (≤ 375px)
+   ============================================================ */
+@media (max-width: 375px) {
+  .tb-btn { font-size: 0.62rem !important; padding: 4px 6px !important; }
+  #editor-frame { padding: 14px 10px !important; }
+  #main-editor { font-size: 0.95rem !important; }
+  #sidebar.open { grid-template-columns: 1fr; }
+}
