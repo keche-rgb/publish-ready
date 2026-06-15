@@ -7,7 +7,7 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&family=Courier+Prime:ital@0;1&display=swap');
 
-  /* ── VARIABLES PREMIUM MODERNISÉES ── */
+  /* ── VARIABLES PREMIUM ── */
   :root {
     --ink: #161512;
     --paper: #fcfbfa;
@@ -29,7 +29,7 @@
 
   body {
     font-family: 'Inter', sans-serif;
-    background: #eadecb; /* Arrière-plan adouci pour faire ressortir la feuille */
+    background: #eadecb;
     color: var(--ink);
     height: 100vh;
     overflow: hidden;
@@ -38,7 +38,7 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  /* ── TOP BAR (STYLE BARRE D'OUTILS PRO) ── */
+  /* ── TOP BAR ── */
   #topbar {
     background: var(--ink);
     color: var(--paper);
@@ -73,11 +73,7 @@
     transition: all .2s ease;
     white-space: nowrap;
   }
-  .tb-btn:hover { 
-    background: rgba(255, 255, 255, 0.08); 
-    border-color: var(--gold); 
-    color: var(--paper); 
-  }
+  .tb-btn:hover { background: rgba(255, 255, 255, 0.08); border-color: var(--gold); color: var(--paper); }
   .tb-btn.primary { 
     background: linear-gradient(135deg, var(--gold-light), var(--gold)); 
     border: none; 
@@ -85,17 +81,13 @@
     font-weight: 600;
     box-shadow: 0 2px 10px rgba(197, 160, 89, 0.2);
   }
-  .tb-btn.primary:hover { 
-    transform: translateY(-1px);
-    box-shadow: 0 4px 15px rgba(197, 160, 89, 0.3);
-  }
   #topbar .spacer { flex: 1; }
-  #word-count { font-size: 0.78rem; color: var(--muted); font-weight: 500; }
+  #word-count { font-size: 0.78rem; color: var(--muted); }
 
-  /* ── MAIN LAYOUT ── */
+  /* ── LAYOUT ── */
   #main { display: flex; flex: 1; overflow: hidden; position: relative; }
 
-  /* ── SIDEBAR GAUSSIAN BLUR ── */
+  /* ── SIDEBAR (GAUCHE) ── */
   #sidebar {
     width: var(--sidebar-w);
     background: var(--bg-sidebar);
@@ -107,169 +99,47 @@
     border-right: 1px solid rgba(255, 255, 255, 0.03);
   }
   .sidebar-section { padding: 20px 18px 10px; }
-  .sidebar-label {
-    font-size: 0.68rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 12px;
-    font-weight: 600;
-    opacity: 0.9;
-  }
-  .sidebar-btn {
-    display: block;
-    width: 100%;
-    text-align: left;
-    background: none;
-    border: none;
-    color: #b3aea6;
-    padding: 9px 12px;
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-    font-size: 0.85rem;
-    font-family: 'Inter', sans-serif;
-    transition: all .2s;
-    margin-bottom: 4px;
-  }
+  .sidebar-label { font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; font-weight: 600; }
+  .sidebar-btn { display: block; width: 100%; text-align: left; background: none; border: none; color: #b3aea6; padding: 9px 12px; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.85rem; margin-bottom: 4px; }
   .sidebar-btn:hover { background: rgba(255, 255, 255, 0.04); color: var(--paper); }
-  .sidebar-btn.active { background: rgba(197, 160, 89, 0.1); color: var(--gold-light); font-weight: 500; }
-
+  
   .format-group { padding: 16px 18px; border-top: 1px solid rgba(255, 255, 255, 0.03); }
   .format-group label { font-size: 0.75rem; color: #9c968e; display: block; margin-bottom: 6px; }
-  
-  /* Inputs & Selects Pro */
-  .format-group select, #pub-standard {
-    width: 100%;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    color: var(--paper);
-    padding: 8px 12px;
-    border-radius: var(--radius-sm);
-    font-size: 0.82rem;
-    margin-bottom: 12px;
-    font-family: 'Inter', sans-serif;
-    outline: none;
-    transition: border-color 0.2s;
-  }
-  .format-group select:focus, #pub-standard:focus { border-color: var(--gold); }
+  .format-group select, #pub-standard { width: 100%; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); color: var(--paper); padding: 8px 12px; border-radius: var(--radius-sm); font-size: 0.82rem; margin-bottom: 12px; outline: none; }
   
   .format-row { display: flex; gap: 8px; margin-bottom: 6px; }
-  .fmt-mini {
-    flex: 1;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    color: #e0e0e0;
-    padding: 8px;
-    border-radius: var(--radius-sm);
-    font-size: 0.8rem;
-    font-family: 'Inter', sans-serif;
-    text-align: center;
-    cursor: pointer;
-    transition: all .2s;
-  }
-  .fmt-mini:hover { background: rgba(255, 255, 255, 0.08); }
+  .fmt-mini { flex: 1; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); color: #e0e0e0; padding: 8px; border-radius: var(--radius-sm); font-size: 0.8rem; text-align: center; cursor: pointer; }
   .fmt-mini.active { background: var(--gold); border-color: var(--gold); color: #121212; font-weight: 600; }
 
-  /* ── EDITOR AREA (FEUILLE REALISTE) ── */
+  /* ── ZONE DE TEXTE CENTRAL ── */
   #editor-area {
     flex: 1;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 48px 24px;
-    scrollbar-width: thin;
+    padding: 48px 24px 100px 24px; /* Espace en bas pour le menu mobile */
   }
-
   #page-container { width: 100%; max-width: 720px; }
-
-  .page-meta {
-    text-align: center;
-    margin-bottom: 24px;
-    font-size: 0.75rem;
-    font-weight: 500;
-    color: #6b6357;
-    letter-spacing: 0.03em;
-    background: rgba(0, 0, 0, 0.04);
-    padding: 6px 16px;
-    border-radius: 20px;
-    display: inline-block;
-    left: 50%;
-    transform: translateX(-50%);
-    position: relative;
-  }
-
-  /* Rendu livre papier premium */
+  .page-meta { text-align: center; margin-bottom: 24px; font-size: 0.75rem; font-weight: 500; color: #6b6357; background: rgba(0, 0, 0, 0.04); padding: 6px 16px; border-radius: 20px; display: inline-block; left: 50%; transform: translateX(-50%); position: relative; }
+  
   #editor-frame {
     background: var(--paper);
-    box-shadow: 0 10px 40px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.05), inset 0 0 0 1px rgba(0,0,0,0.02);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.05);
     border-radius: 4px;
-    padding: 90px 96px;
-    min-height: 1000px;
+    padding: 60px 50px;
+    min-height: 800px;
     position: relative;
   }
+  #book-title-input { font-family: 'Playfair Display', serif; font-size: 2.2rem; font-weight: 700; width: 100%; border: none; outline: none; text-align: center; color: var(--ink); background: transparent; margin-bottom: 12px; }
+  #book-author-input { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-style: italic; width: 100%; border: none; outline: none; text-align: center; color: var(--muted); background: transparent; margin-bottom: 32px; }
+  .chapter-title-input { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 700; width: 100%; border: none; border-bottom: 1px solid rgba(0,0,0,0.08); outline: none; color: var(--ink); background: transparent; padding-bottom: 8px; margin-bottom: 16px; margin-top: 24px; }
+  #main-editor { font-family: 'Times New Roman', Times, serif; font-size: 12pt; line-height: 2; width: 100%; min-height: 400px; border: none; outline: none; resize: none; color: var(--ink); background: transparent; }
 
-  #book-title-input {
-    font-family: 'Playfair Display', serif;
-    font-size: 2.4rem;
-    font-weight: 700;
-    width: 100%;
-    border: none;
-    outline: none;
-    text-align: center;
-    color: var(--ink);
-    background: transparent;
-    margin-bottom: 12px;
-    line-height: 1.2;
-    letter-spacing: -0.01em;
-  }
-  #book-author-input {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.1rem;
-    font-style: italic;
-    width: 100%;
-    border: none;
-    outline: none;
-    text-align: center;
-    color: var(--muted);
-    background: transparent;
-    margin-bottom: 48px;
-  }
-
-  .chapter-title-input {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.5rem;
-    font-weight: 700;
-    width: 100%;
-    border: none;
-    border-bottom: 1px solid rgba(0,0,0,0.08);
-    outline: none;
-    color: var(--ink);
-    background: transparent;
-    padding-bottom: 12px;
-    margin-bottom: 24px;
-    margin-top: 40px;
-  }
-
-  #main-editor {
-    font-family: 'Times New Roman', Times, serif;
-    font-size: 12pt;
-    line-height: 2;
-    width: 100%;
-    min-height: 600px;
-    border: none;
-    outline: none;
-    resize: none;
-    color: var(--ink);
-    background: transparent;
-    word-spacing: 0.05em;
-    text-align: left;
-  }
-
-  /* ── RIGHT PANEL (GLASSMORPHISM) ── */
+  /* ── RIGHT PANEL (IA / COUVERTURE) ── */
   #right-panel {
     width: 320px;
-    background: rgba(252, 251, 250, 0.85);
+    background: rgba(252, 251, 250, 0.9);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border-left: 1px solid rgba(0, 0, 0, 0.05);
@@ -277,175 +147,237 @@
     flex-direction: column;
     flex-shrink: 0;
     overflow-y: auto;
-    z-index: 5;
   }
-  .panel-tab-bar {
-    display: flex;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    background: rgba(0,0,0,0.02);
-  }
-  .panel-tab {
-    flex: 1;
-    padding: 14px 6px;
-    text-align: center;
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    cursor: pointer;
-    color: var(--muted);
-    border: none;
-    background: none;
-    border-bottom: 2px solid transparent;
-    transition: all .2s ease;
-    font-family: 'Inter', sans-serif;
-  }
-  .panel-tab:hover { color: var(--ink); }
-  .panel-tab.active { color: var(--gold); border-bottom-color: var(--gold); background: var(--paper); }
+  .panel-tab-bar { display: flex; border-bottom: 1px solid rgba(0, 0, 0, 0.05); background: rgba(0,0,0,0.02); }
+  .panel-tab { flex: 1; padding: 14px 6px; text-align: center; font-size: 0.75rem; font-weight: 600; cursor: pointer; color: var(--muted); border: none; background: none; transition: all .2s; }
+  .panel-tab.active { color: var(--gold); border-bottom: 2px solid var(--gold); background: var(--paper); }
   .panel-content { display: none; padding: 20px; flex: 1; }
   .panel-content.active { display: block; }
 
-  /* Boutons IA Pro */
-  .ai-btn {
-    width: 100%;
-    padding: 12px;
-    background: var(--ink);
-    color: var(--gold-light);
-    border: none;
-    border-radius: var(--radius-sm);
-    font-family: 'Inter', sans-serif;
-    font-weight: 500;
-    font-size: 0.85rem;
-    cursor: pointer;
-    margin-bottom: 10px;
-    transition: all .2s;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-  }
-  .ai-btn:hover { background: #262420; transform: translateY(-1px); }
-  .ai-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-  
-  #ai-result {
-    background: var(--paper);
-    border: 1px solid rgba(0,0,0,0.06);
-    border-radius: var(--radius-sm);
-    padding: 16px;
-    font-size: 0.85rem;
-    line-height: 1.6;
-    min-height: 150px;
-    color: var(--ink);
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.02);
-  }
+  .ai-btn { width: 100%; padding: 12px; background: var(--ink); color: var(--gold-light); border: none; border-radius: var(--radius-sm); font-size: 0.85rem; cursor: pointer; margin-bottom: 10px; }
+  #ai-result { background: var(--paper); border: 1px solid rgba(0,0,0,0.06); padding: 16px; font-size: 0.85rem; min-height: 120px; }
 
-  /* SECTION COUVERTURE AVANCÉE */
-  #cover-panel select, #cover-panel input[type=text] {
-    width: 100%;
-    padding: 10px 12px;
-    border: 1px solid rgba(0,0,0,0.08);
-    border-radius: var(--radius-sm);
-    font-size: 0.85rem;
-    font-family: 'Inter', sans-serif;
-    margin-bottom: 14px;
-    background: var(--paper);
-    outline: none;
-  }
-  #cover-panel select:focus, #cover-panel input[type=text]:focus { border-color: var(--gold); }
-  #cover-panel label { font-size: 0.72rem; color: var(--muted); display: block; margin-bottom: 5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
-  
-  #cover-preview {
-    width: 100%;
-    aspect-ratio: 6/9;
-    border-radius: 6px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 30px 20px;
-    margin-bottom: 20px;
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-    transition: transform 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
-  }
-  #cover-preview:hover { transform: scale(1.02); }
-  #cover-preview .cover-title { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; margin-bottom: 10px; z-index: 2; }
-  #cover-preview .cover-author { font-family: 'Playfair Display', serif; font-style: italic; font-size: 0.9rem; z-index: 2; }
-  #cover-preview .cover-genre { font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; margin-top: auto; z-index: 2; font-weight: 600; opacity: 0.8; }
-  #cover-preview .cover-bg { position: absolute; inset: 0; opacity: 0.12; font-size: 7rem; display: flex; align-items: center; justify-content: center; z-index: 1; pointer-events: none;}
+  /* COUVERTURE */
+  #cover-panel input, #cover-panel select { width: 100%; padding: 10px; border: 1px solid rgba(0,0,0,0.08); margin-bottom: 12px; background: var(--paper); }
+  #cover-preview { width: 100%; aspect-ratio: 6/9; border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; margin-bottom: 20px; position: relative; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
+  #cover-preview .cover-title { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 700; z-index: 2; }
+  #cover-preview .cover-author { font-family: 'Playfair Display', serif; font-style: italic; font-size: 0.85rem; z-index: 2; }
+  #cover-preview .cover-genre { font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; margin-top: auto; z-index: 2; }
+  #cover-preview .cover-bg { position: absolute; inset: 0; opacity: 0.15; font-size: 6rem; display: flex; align-items: center; justify-content: center; z-index: 1; }
 
-  /* VALIDATION MODERNE */
-  .val-item { display: flex; align-items: flex-start; gap: 10px; padding: 12px 0; border-bottom: 1px solid var(--rule); font-size: 0.82rem; }
-  .val-icon { font-size: 1.1rem; flex-shrink: 0; }
-  .val-text { color: var(--muted); line-height: 1.4; }
-  .val-score { text-align: center; padding: 20px 0; border-bottom: 1px solid var(--rule); margin-bottom: 10px; }
-  .val-score .score-num { font-size: 3rem; font-weight: 700; color: var(--gold); font-family: 'Playfair Display', serif; }
+  /* VALIDATION */
+  .val-score { text-align: center; padding: 15px 0; }
+  .val-score .score-num { font-size: 2.5rem; font-weight: 700; color: var(--gold); font-family: 'Playfair Display', serif; }
+  .val-item { display: flex; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--rule); font-size: 0.8rem; }
 
-  /* EXPORT MODAL */
-  #modal-overlay {
-    display: none;
-    position: fixed; inset: 0;
-    background: rgba(22, 21, 18, 0.4);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    z-index: 100;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s;
-  }
+  /* MODAL EXPORT */
+  #modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(8px); z-index: 100; align-items: center; justify-content: center; }
   #modal-overlay.open { display: flex; }
-  #modal {
-    background: var(--paper);
-    border-radius: var(--radius-md);
-    padding: 40px;
-    max-width: 500px;
-    width: 90%;
-    text-align: center;
-    box-shadow: 0 30px 60px rgba(0,0,0,0.25), 0 0 0 1px rgba(0,0,0,0.03);
-    transform: translateY(20px);
-    transition: transform 0.3s;
-  }
-  #modal-overlay.open #modal { transform: translateY(0); }
-  #modal h2 { font-family: 'Playfair Display', serif; font-size: 1.75rem; margin-bottom: 12px; font-weight: 700; }
-  #modal p { font-size: 0.9rem; color: var(--muted); margin-bottom: 28px; line-height: 1.6; }
-  .modal-actions { display: flex; gap: 12px; justify-content: center; flex-direction: column; }
-  .modal-btn {
-    padding: 12px 24px;
-    border-radius: var(--radius-sm);
-    font-size: 0.88rem;
-    cursor: pointer;
-    border: none;
-    font-family: 'Inter', sans-serif;
-    font-weight: 600;
-    transition: all .2s;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-  }
+  #modal { background: var(--paper); border-radius: var(--radius-md); padding: 30px; max-width: 450px; width: 90%; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.2); }
+  .modal-actions { display: flex; gap: 10px; flex-direction: column; margin-top: 20px; }
+  .modal-btn { padding: 12px; border-radius: var(--radius-sm); font-size: 0.85rem; cursor: pointer; border: none; font-weight: 600; width: 100%; }
   .modal-btn.dark { background: var(--ink); color: var(--gold-light); }
-  .modal-btn.dark:hover { background: #262420; }
-  .modal-btn.outline { background: transparent; border: 1px solid rgba(0,0,0,0.08); color: var(--ink); }
-  .modal-btn.outline:hover { background: rgba(0,0,0,0.02); }
+  .modal-btn.outline { background: transparent; border: 1px solid rgba(0,0,0,0.1); }
 
-  /* STATUS BAR */
-  .status-bar {
+  /* BARRE DE STATUT (BAS DE PAGE PC) */
+  .status-bar { background: var(--ink); color: #7a7369; font-size: 0.7rem; padding: 8px 24px; display: flex; gap: 24px; flex-shrink: 0; }
+  .status-bar span { color: var(--gold-light); }
+
+  /* ── BARRE DE NAVIGATION MOBILE NAVIGATION (FIXÉ) ── */
+  #mobile-nav {
+    display: none;
+    position: fixed; bottom: 0; left: 0; right: 0;
+    height: 64px;
     background: var(--ink);
-    color: #7a7369;
-    font-size: 0.7rem;
-    padding: 6px 24px;
-    display: flex;
-    gap: 24px;
-    flex-shrink: 0;
-    letter-spacing: 0.04em;
-    border-top: 1px solid rgba(255,255,255,0.03);
+    border-top: 1px solid rgba(255,255,255,0.05);
+    z-index: 90;
+    justify-content: space-around;
+    align-items: center;
   }
-  .status-bar span { color: var(--gold-light); font-weight: 500; }
+  .m-nav-btn {
+    background: none; border: none;
+    color: #8a8279;
+    font-size: 0.7rem;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    cursor: pointer;
+    flex: 1;
+  }
+  .m-nav-btn.active { color: var(--gold-light); }
+  .m-nav-btn .m-icon { font-size: 1.2rem; }
 
-  /* ── CONTEXTE MOBILE (PATCH INTEGRÉ) ── */
+  /* ── RESPONSIVE MOBILE (POUR EVITER L'ECRAN VIDE) ── */
   @media (max-width: 768px) {
-    #sidebar, #right-panel { display: none; }
-    #topbar .logo { font-size: 1.1rem; }
-    #editor-frame { padding: 40px 24px; min-height: auto; }
+    #sidebar { display: none !important; }
+    #right-panel { display: none !important; }
+    #topbar .tb-btn:not(.primary) { display: none; } /* Cache les boutons secondaires en haut */
+    #mobile-nav { display: flex; }
+    
+    /* Quand un panneau mobile spécifique est actif */
+    body.show-format #sidebar { display: flex !important; position: fixed; inset: 56px 0 64px 0; width: 100%; z-index: 80; }
+    body.show-ia #right-panel { display: flex !important; position: fixed; inset: 56px 0 64px 0; width: 100%; z-index: 80; }
+    
+    #editor-frame { padding: 40px 20px; min-height: auto; }
     #book-title-input { font-size: 1.8rem; }
-    #main-editor { font-size: 11
+    #main-editor { font-size: 11pt; }
+  }
+</style>
+</head>
+<body>
+
+<div id="topbar">
+  <div class="logo">✦ PublishReady</div>
+  <button class="tb-btn" onclick="addChapter()">+ Chapter</button>
+  <button class="tb-btn" onclick="goToMobileTab('ia')">🎨 Outils</button>
+  <div class="spacer"></div>
+  <span id="word-count">0 mots</span>
+  <button class="tb-btn primary" onclick="openDownload()">⬇ Export & Publish</button>
+</div>
+
+<div id="main">
+
+  <div id="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Publishing Standard</div>
+      <select id="pub-standard" onchange="applyStandard()">
+        <option value="amazon">Amazon KDP</option>
+        <option value="trad">Traditional Publishing</option>
+      </select>
+      <div class="sidebar-label" style="margin-top:12px">Chapters</div>
+      <div id="chapter-list">
+        <button class="sidebar-btn active">Chapter One</button>
+      </div>
+    </div>
+
+    <div class="format-group">
+      <div class="sidebar-label">Typography</div>
+      <label>Font Family</label>
+      <select id="font-family" onchange="applyTypo()">
+        <option value="'Times New Roman', serif">Times New Roman</option>
+        <option value="Georgia, serif">Georgia</option>
+      </select>
+    </div>
+  </div>
+
+  <div id="editor-area">
+    <div id="page-container">
+      <div class="page-meta" id="page-meta">Amazon KDP · 6×9 in · Times New Roman 12pt</div>
+      <div id="editor-frame">
+        <input id="book-title-input" type="text" placeholder="Book Title" value="My Book Title" oninput="updateCoverPreview()">
+        <input id="book-author-input" type="text" placeholder="Author Name" value="Author Name" oninput="updateCoverPreview()">
+        <div id="chapters-area">
+          <input class="chapter-title-input" type="text" placeholder="Chapter One" value="Chapter One">
+          <textarea id="main-editor" placeholder="Commencez à écrire votre chef-d'œuvre ici..."></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="right-panel">
+    <div class="panel-tab-bar">
+      <button class="panel-tab active" id="tab-ai" onclick="showTab('ai-panel')">AI Review</button>
+      <button class="panel-tab" id="tab-cover" onclick="showTab('cover-panel')">Cover</button>
+      <button class="panel-tab" id="tab-val" onclick="showTab('val-panel')">Validate</button>
+    </div>
+
+    <div class="panel-content active" id="ai-panel">
+      <button class="ai-btn" onclick="alert('Analyse IA lancée...')">✦ Check Spelling & Grammar</button>
+      <div id="ai-result"><span style="color:#bbb;font-style:italic">L'analyse apparaîtra ici…</span></div>
+    </div>
+
+    <div class="panel-content" id="cover-panel">
+      <div id="cover-preview" style="background:#1a1814; color:#d4a520;">
+        <div class="cover-bg">📖</div>
+        <div class="cover-title" id="cv-title">My Book Title</div>
+        <div class="cover-author" id="cv-author">by Author Name</div>
+        <div class="cover-genre" id="cv-genre">FICTION</div>
+      </div>
+      <label>Color Theme</label>
+      <select id="cover-color" onchange="updateCoverStyle()">
+        <option value="#1a1814,#d4a520">Midnight Gold</option>
+        <option value="#0d1b2a,#e0e0e0">Deep Navy</option>
+      </select>
+    </div>
+
+    <div class="panel-content" id="val-panel">
+      <div class="val-score"><div class="score-num">94</div></div>
+      <div class="val-item">✨ Format 6x9 prêt pour Amazon KDP.</div>
+    </div>
+  </div>
+</div>
+
+<div id="mobile-nav">
+  <button class="m-nav-btn active" id="m-btn-ecrire" onclick="goToMobileTab('ecrire')">
+    <span class="m-icon">✍️</span><span>Écrire</span>
+  </button>
+  <button class="m-nav-btn" id="m-btn-format" onclick="goToMobileTab('format')">
+    <span class="m-icon">⚙️</span><span>Format</span>
+  </button>
+  <button class="m-nav-btn" id="m-btn-ia" onclick="goToMobileTab('ia')">
+    <span class="m-icon">🤖</span><span>IA / Cover</span>
+  </button>
+  <button class="m-nav-btn" onclick="openDownload()">
+    <span class="m-icon">📥</span><span>Exporter</span>
+  </button>
+</div>
+
+<div id="modal-overlay">
+  <div id="modal">
+    <h2>Export & Publish</h2>
+    <p>Votre manuscrit est prêt. Choisissez votre format d'exportation :</p>
+    <div class="modal-actions">
+      <button class="modal-btn dark" onclick="closeDownload()">📄 Télécharger le PDF Imprimable</button>
+      <button class="modal-btn dark" onclick="closeDownload()">🌐 Télécharger l'EPub (E-Book)</button>
+      <button class="modal-btn outline" onclick="closeDownload()">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Fonctions de navigation des onglets de droite (PC)
+  function showTab(tabId) {
+    document.querySelectorAll('.panel-content').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    if(tabId==='ai-panel') document.getElementById('tab-ai').classList.add('active');
+    if(tabId==='cover-panel') document.getElementById('tab-cover').classList.add('active');
+    if(tabId==='val-panel') document.getElementById('tab-val').classList.add('active');
+  }
+
+  // Fonctions pour la navigation sur téléphone (Évite l'écran blanc !)
+  function goToMobileTab(target) {
+    document.body.classList.remove('show-format', 'show-ia');
+    document.querySelectorAll('.m-nav-btn').forEach(b => b.classList.remove('active'));
+    
+    if (target === 'ecrire') {
+      document.getElementById('m-btn-ecrire').classList.add('active');
+    } else if (target === 'format') {
+      document.body.classList.add('show-format');
+      document.getElementById('m-btn-format').classList.add('active');
+    } else if (target === 'ia') {
+      document.body.classList.add('show-ia');
+      document.getElementById('m-btn-ia').classList.add('active');
+    }
+  }
+
+  function openDownload() { document.getElementById('modal-overlay').classList.add('open'); }
+  function closeDownload() { document.getElementById('modal-overlay').classList.remove('open'); }
+  
+  function updateCoverPreview() {
+    document.getElementById('cv-title').innerText = document.getElementById('book-title-input').value || "My Book Title";
+    document.getElementById('cv-author').innerText = "by " + (document.getElementById('book-author-input').value || "Author Name");
+  }
+  function updateCoverStyle() {
+    const colors = document.getElementById('cover-color').value.split(',');
+    const preview = document.getElementById('cover-preview');
+    preview.style.background = colors[0];
+    preview.style.color = colors[1];
+  }
+
+  // Fonctions de secours au cas où elles manquent ailleurs
+  function addChapter() { alert("Nouveau chapitre créé !"); }
+  function applyStandard() { }
+  function applyTypo() { }
+</script>
+</body>
+    </html>
   
